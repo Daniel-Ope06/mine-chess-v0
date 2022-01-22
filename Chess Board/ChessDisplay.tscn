@@ -1,0 +1,263 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Assets/chess/board.png" type="Texture" id=1]
+[ext_resource path="res://Assets/chess/numbers.png" type="Texture" id=2]
+[ext_resource path="res://Assets/chess/text.png" type="Texture" id=3]
+[ext_resource path="res://Scripts/chess_board.gd" type="Script" id=4]
+[ext_resource path="res://Assets/press-start/prstart.ttf" type="DynamicFontData" id=5]
+
+[sub_resource type="DynamicFont" id=1]
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 8
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=7]
+size = 8
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=8]
+size = 8
+font_data = ExtResource( 5 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 8
+font_data = ExtResource( 5 )
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.105882, 0.101961, 0.101961, 1 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 8
+font_data = ExtResource( 5 )
+
+[sub_resource type="StyleBoxEmpty" id=5]
+
+[node name="ChessDisplay" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+zoom = Vector2( 0.33, 0.33 )
+
+[node name="Board" type="Node2D" parent="."]
+script = ExtResource( 4 )
+width = 8
+height = 8
+x_start = -77
+y_start = 77
+offset = 22
+
+[node name="Chess Board" type="Sprite" parent="Board"]
+texture = ExtResource( 1 )
+
+[node name="Numbers" type="Sprite" parent="Board"]
+position = Vector2( -99, -1.11362 )
+texture = ExtResource( 2 )
+
+[node name="Letters" type="Sprite" parent="Board"]
+position = Vector2( 0, 99.445 )
+texture = ExtResource( 3 )
+
+[node name="Title" type="Label" parent="Board"]
+margin_left = -78.8052
+margin_top = -105.199
+margin_right = 81.1948
+margin_bottom = -89.1985
+custom_fonts/font = SubResource( 1 )
+text = "Mine Chess"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MinesInstruction" type="Label" parent="Board"]
+margin_left = -203.79
+margin_top = -18.7941
+margin_right = -107.79
+margin_bottom = -4.7941
+custom_colors/font_color = Color( 0.2, 0.192157, 0.223529, 1 )
+custom_colors/font_color_shadow = Color( 0.721569, 0.709804, 0.709804, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "No. of Mines"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TileInstruction" type="Label" parent="Board"]
+visible = false
+margin_left = -203.79
+margin_top = -18.7941
+margin_right = -107.79
+margin_bottom = -4.7941
+custom_colors/font_color = Color( 0.2, 0.192157, 0.223529, 1 )
+custom_colors/font_color_shadow = Color( 0.721569, 0.709804, 0.709804, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Chess Tile"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WhiteTurn" type="Label" parent="Board"]
+margin_left = 99.0
+margin_top = -11.0
+margin_right = 198.0
+margin_bottom = 3.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "White's turn"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WhiteGold_H" type="Label" parent="Board"]
+margin_left = 99.0
+margin_top = 44.0
+margin_right = 131.0
+margin_bottom = 58.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Gold  :"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WhiteMine_H" type="Label" parent="Board"]
+margin_left = 99.0
+margin_top = 66.0
+margin_right = 139.0
+margin_bottom = 80.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Mines :"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WhiteGold_V" type="Label" parent="Board"]
+margin_left = 165.0
+margin_top = 44.0
+margin_right = 205.0
+margin_bottom = 58.0
+custom_fonts/font = SubResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WhiteMine_V" type="Label" parent="Board"]
+margin_left = 165.0
+margin_top = 66.0
+margin_right = 205.0
+margin_bottom = 80.0
+custom_fonts/font = SubResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BlackTurn" type="Label" parent="Board"]
+visible = false
+margin_left = 99.0
+margin_top = -11.0
+margin_right = 195.0
+margin_bottom = 3.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0.721569, 0.709804, 0.709804, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Black's turn"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BlackGold_H" type="Label" parent="Board"]
+margin_left = 99.0
+margin_top = -77.0
+margin_right = 132.0
+margin_bottom = -63.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0.721569, 0.709804, 0.709804, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Gold  :"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BlackGold_V" type="Label" parent="Board"]
+margin_left = 165.0
+margin_top = -77.0
+margin_right = 205.0
+margin_bottom = -63.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BlackMine_V" type="Label" parent="Board"]
+margin_left = 165.0
+margin_top = -55.0
+margin_right = 205.0
+margin_bottom = -41.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BlackMine_H" type="Label" parent="Board"]
+margin_left = 99.0
+margin_top = -55.0
+margin_right = 139.0
+margin_bottom = -41.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0.721569, 0.709804, 0.709804, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Mines :"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BuyMine" type="Button" parent="Board"]
+margin_left = -198.0
+margin_top = -44.0
+margin_right = -121.0
+margin_bottom = -30.0
+custom_fonts/font = SubResource( 3 )
+text = "Buy Mine"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SetMine" type="Button" parent="Board"]
+margin_left = -198.0
+margin_top = 33.0
+margin_right = -121.0
+margin_bottom = 47.0
+custom_fonts/font = SubResource( 3 )
+text = "Set Mine"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InputArea" type="PanelContainer" parent="Board"]
+margin_left = -204.412
+margin_top = -6.99263
+margin_right = -108.412
+margin_bottom = 7.00733
+custom_styles/panel = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Input" type="LineEdit" parent="Board/InputArea"]
+margin_right = 96.0
+margin_bottom = 14.0
+custom_fonts/font = SubResource( 6 )
+custom_styles/normal = SubResource( 5 )
+
+[node name="DissolveTimer" type="Timer" parent="Board"]
+
+[connection signal="pressed" from="Board/BuyMine" to="Board" method="_on_BuyMine_pressed"]
+[connection signal="pressed" from="Board/SetMine" to="Board" method="_on_SetMine_pressed"]
+[connection signal="text_entered" from="Board/InputArea/Input" to="Board" method="_on_Input_text_entered"]
