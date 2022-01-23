@@ -7,7 +7,8 @@ export (int) var x_start
 export (int) var y_start
 export (int) var offset
 
-var possible_pieces = [
+# Loading in needed scenes
+const possible_pieces = [
 	# White pieces
 	preload("res://Chess Pieces/White Pieces/white_pawn.tscn"),
 	preload("res://Chess Pieces/White Pieces/white_bishop.tscn"),
@@ -25,6 +26,9 @@ var possible_pieces = [
 	preload("res://Chess Pieces/Black Pieces/black_queen.tscn")
 ]
 
+const gameOverScreen = preload("res://UI/GameOverScreen.tscn")
+
+# creating empty arrays and turn counter
 var all_pieces = []
 var piece_types = []
 var white_turn = true
@@ -40,14 +44,14 @@ onready var BuyMine: Button = $BuyMine
 onready var SetMine: Button = $SetMine
 onready var dissolveTimer = $DissolveTimer
 var button_pressed = 'Buy'
-var black_mines = 0
+var black_mines = 2
 var white_mines = 0
 
 # Gold system
 var black_gold = 0
 var white_gold = 0
 var chess_notations = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7}
-var piece_value = {'PAWN':1, 'KNIGHT':3, 'BISHOP':3, 'ROOK':5, 'QUEEN':9}
+var piece_value = {'PAWN':1, 'KNIGHT':3, 'BISHOP':3, 'ROOK':5, 'QUEEN':9, 'KING':0}
 
 
 func _ready():
@@ -55,11 +59,18 @@ func _ready():
 	piece_types = make_2d_array()
 	spawn_white_pieces()
 	spaw_black_pieces()
+	
+	# Hide labels
+	$WhiteInCheck.visible = false
+	$WhiteInCheckmate.visible = false
+	$BlackInCheck.visible = false
+	$BlackInCheckmate.visible = false
 
 func _process(_delta):
 	touch_input()
 	display_turn()
 	display_instruction()
+	display_check_and_checkmate()
 	
 	# Display gold
 	$WhiteGold_V.text = str(white_gold)
@@ -79,6 +90,12 @@ func make_2d_array():
 		for j in height:
 			array[i].append(null)
 	return array
+
+func find_index(piece):
+	for i in range(piece_types.size()):
+		for j in range(piece_types.size()):
+			if piece_types[i][j] == piece:
+				return(Vector2(i,j))
 
 func spawn_white_pieces():
 	# spawn pawns
@@ -280,6 +297,43 @@ func display_turn():
 		$WhiteTurn.visible = false
 		$BlackTurn.visible = true
 
+func display_check_and_checkmate():
+	var w_king_pos = find_index('W_KING')
+	var b_king_pos = find_index('B_KING')
+	
+	if (w_king_pos != null) and (b_king_pos != null):
+		# show check
+		if (white_in_check(w_king_pos.x, w_king_pos.y)) and not(white_in_checkmate(w_king_pos.x, w_king_pos.y)):
+			$WhiteInCheck.visible = true
+		if (black_in_check(b_king_pos.x, b_king_pos.y)) and not(black_in_checkmate(w_king_pos.x, w_king_pos.y)):
+			$BlackInCheck.visible = true
+			
+		# remove check
+		if not(white_in_check(w_king_pos.x, w_king_pos.y)) and not(white_in_checkmate(w_king_pos.x, w_king_pos.y)):
+			$WhiteInCheck.visible = false
+		if not(black_in_check(b_king_pos.x, b_king_pos.y)) and not(black_in_checkmate(w_king_pos.x, w_king_pos.y)):
+			$BlackInCheck.visible = false
+		
+		
+		# show checkmate
+		if (white_in_checkmate(w_king_pos.x, w_king_pos.y)):
+			$WhiteInCheckmate.visible = true
+			# wait for some time before showing game over screen
+			yield(get_tree().create_timer(2.0), "timeout")
+			var game_over = gameOverScreen.instance()
+			add_child(game_over)
+			game_over.set_winner(false)
+			get_tree().paused = true
+		if (black_in_checkmate(b_king_pos.x, b_king_pos.y)):
+			$BlackInCheckmate.visible = true
+			# wait for some time before showing game over screen
+			yield(get_tree().create_timer(2.0), "timeout")
+			var game_over = gameOverScreen.instance()
+			add_child(game_over)
+			game_over.set_winner(true)
+			get_tree().paused = true
+
+
 
 #________________Chess Movements________________
 # Pawn movement
@@ -289,6 +343,7 @@ func move_w_pawn(column, row, direction, selected_piece, target_pos, selected_ty
 		if target_pos == null and direction.x == 0:
 			if (row == 1 and (direction.y == 1 or direction.y == 2)) or (row != 1 and direction.y == 1):
 				move_piece(column, row, selected_piece, selected_type, direction)
+				#undo_invalid_move_in_check(column, row, selected_piece, selected_type, target_pos, direction)
 		
 		# kill enemy piece
 		if (target_type != null) and ("B_" in target_type) and (direction.x == 1 or direction.x == -1):
@@ -494,9 +549,9 @@ func move_b_queen(column, row, direction, selected_piece, target_pos, selected_t
 
 # King movement
 func move_w_king(column, row, direction, selected_piece, target_pos, selected_type, target_type):
-	if selected_type == "W_KING":
+	if selected_type == "W_KING" and not(white_in_check(column+direction.x, row+direction.y)):
 		# move to empty space
-		if target_pos == null:
+		if (target_pos == null) and not(white_in_check(column+direction.x, row+direction.y)):
 			if abs(direction.x) <= 1 and abs(direction.y) <= 1:
 				move_piece(column, row, selected_piece, selected_type, direction)
 		
@@ -512,9 +567,39 @@ func move_w_king(column, row, direction, selected_piece, target_pos, selected_ty
 		if (target_type == 'MINE'):
 			if abs(direction.x) <= 1 and abs(direction.y) <= 1:
 				stepped_on_mine(column, row, direction, selected_piece, selected_type)
+				
+				# wait for some time before showing game over screen
+				yield(get_tree().create_timer(2.0), "timeout")
+				var game_over = gameOverScreen.instance()
+				add_child(game_over)
+				game_over.set_winner(false)
+			
+		# Castling
+		if (target_pos == null) and (column == 4) and (row == 0):
+			# king side castling
+			if (direction.x == 2) and (piece_types[7][0] == 'W_ROOK') and check_castling(column, row, direction) and not(white_in_check(column+1, row)) and not(white_in_check(column+2, row)):
+				# move king
+				move_piece(column, row, selected_piece, selected_type, direction)
+				
+				# move rook
+				all_pieces[7][0].move(grid_to_pixel(5, 0))
+				piece_types[5][0] = 'W_ROOK'
+				all_pieces[7][0] = null
+				piece_types[7][0] = null
+				
+			# queen side castling
+			if (direction.x == -2) and (piece_types[0][0] == 'W_ROOK') and check_castling(column, row, direction) and not(white_in_check(column-1, row)) and not(white_in_check(column-2, row)):
+				# move king
+				move_piece(column, row, selected_piece, selected_type, direction)
+				
+				# move rook
+				all_pieces[0][0].move(grid_to_pixel(3, 0))
+				piece_types[3][0] = 'W_ROOK'
+				all_pieces[0][0] = null
+				piece_types[0][0] = null
 
 func move_b_king(column, row, direction, selected_piece, target_pos, selected_type, target_type):
-	if selected_type == "B_KING":
+	if selected_type == "B_KING" and not(black_in_check(column+direction.x, row+direction.y)):
 		# move to empty space
 		if target_pos == null:
 			if abs(direction.x) <= 1 and abs(direction.y) <= 1:
@@ -532,8 +617,39 @@ func move_b_king(column, row, direction, selected_piece, target_pos, selected_ty
 		if (target_type == 'MINE'):
 			if abs(direction.x) <= 1 and abs(direction.y) <= 1:
 				stepped_on_mine(column, row, direction, selected_piece, selected_type)
+				
+				# wait for some time before showing game over screen
+				yield(get_tree().create_timer(2.0), "timeout")
+				var game_over = gameOverScreen.instance()
+				add_child(game_over)
+				game_over.set_winner(true)
+		
+		# Castling
+		if (target_pos == null) and (column == 4) and (row == 7):
+			# king side castling
+			if (direction.x == 2) and (piece_types[7][7] == 'B_ROOK') and check_castling(column, row, direction) and not(black_in_check(column+1, row)) and not(black_in_check(column+2, row)):
+				# move king
+				move_piece(column, row, selected_piece, selected_type, direction)
+				
+				# move rook
+				all_pieces[7][7].move(grid_to_pixel(5, 7))
+				piece_types[5][7] = 'B_ROOK'
+				all_pieces[7][7] = null
+				piece_types[7][7] = null
+				
+			# queen side castling
+			if (direction.x == -2) and (piece_types[0][7] == 'B_ROOK') and check_castling(column, row, direction) and not(black_in_check(column-1, row)) and not(black_in_check(column-2, row)):
+				# move king
+				move_piece(column, row, selected_piece, selected_type, direction)
+				
+				# move rook
+				all_pieces[0][7].move(grid_to_pixel(3, 7))
+				piece_types[3][7] = 'B_ROOK'
+				all_pieces[0][7] = null
+				piece_types[0][7] = null
 
-# Checking paths
+
+#________________Checking conditions________________
 func check_rook_path(column, row, direction):
 	var path = []
 	
@@ -583,9 +699,337 @@ func check_bishop_path(column, row, direction):
 	else:
 		return false
 
-# Promoting pawns
-func promote_pawn():
-	pass
+func check_castling(column, row, direction):
+	var path = []
+	
+	if direction.x == 2:
+		for i in range(1, 3):
+			path.append(piece_types[column+i][row])
+			
+	if direction.x == -2:
+		for i in range(1, 3):
+			path.append(piece_types[column-i][row])
+	
+	if path.count(null) == len(path):
+		return true
+	else:
+		return false
+
+func white_in_check(column, row):
+	# lists
+	var path_up = [null]
+	var path_down = [null]
+	var path_left = [null]
+	var path_right = [null]
+	var path_up_left = [null]
+	var path_up_right = [null]
+	var path_down_left = [null]
+	var path_down_right = [null]
+	var path_knights = [null]
+	
+	# counters
+	var i_up = 0
+	var i_down = 0
+	var i_left = 0
+	var i_right = 0
+	var i_up_left = 0
+	var i_up_right = 0
+	var i_down_left = 0
+	var i_down_right = 0
+	
+	# checking up
+	while ((path_up[len(path_up)-1] == null) or (path_up[len(path_up)-1] == 'MINE')) and (row+i_up < 7):
+		i_up += 1
+		path_up.append(piece_types[column][row+i_up])
+	
+	# checking down
+	while ((path_down[len(path_down)-1] == null) or (path_down[len(path_down)-1] == 'MINE')) and (row-i_down > 0):
+		i_down += 1
+		path_down.append(piece_types[column][row-i_down])
+	
+	# checking left
+	while ((path_left[len(path_left)-1] == null) or (path_left[len(path_left)-1] == 'MINE')) and (column-i_left > 0):
+		i_left += 1
+		path_left.append(piece_types[column-i_left][row])
+		
+	# checking right
+	while ((path_right[len(path_right)-1] == null) or (path_right[len(path_right)-1] == 'MINE')) and (column+i_right < 7):
+		i_right += 1
+		path_right.append(piece_types[column+i_right][row])
+	
+	# checking up_left
+	while ((path_up_left[len(path_up_left)-1] == null) or (path_up_left[len(path_up_left)-1] == 'MINE')) and (column-i_up_left > 0) and (row+i_up_left < 7):
+		i_up_left += 1
+		path_up_left.append(piece_types[column - i_up_left][row + i_up_left])
+	
+	# checking up_right
+	while ((path_up_right[len(path_up_right)-1] == null) or (path_up_right[len(path_up_right)-1] == 'MINE')) and (column+i_up_right < 7) and (row+i_up_right < 7):
+		i_up_right += 1
+		path_up_right.append(piece_types[column + i_up_right][row + i_up_right])
+	
+	# checking down_left
+	while ((path_down_left[len(path_down_left)-1] == null) or (path_down_left[len(path_down_left)-1] == 'MINE')) and (column-i_down_left > 0) and (row-i_down_left > 0):
+		i_down_left += 1
+		path_down_left.append(piece_types[column - i_down_left][row - i_down_left])
+	
+	# checking down_right
+	while ((path_down_right[len(path_down_right)-1] == null) or (path_down_right[len(path_down_right)-1] == 'MINE')) and (column+i_down_right < 7) and (row-i_down_right > 0):
+		i_down_right += 1
+		path_down_right.append(piece_types[column + i_down_right][row - i_down_right])
+	
+	# checking knight paths
+	if (column+2 <= 7):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column+2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column+2][row-1])
+	if (column-2 >= 0):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column-2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column-2][row-1])
+	if (row+2 <= 7):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row+2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row+2])
+	if (row-2 >= 0):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row-2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row-2])
+	
+	
+	# checking if white in check
+	if white_turn == true:
+		# checking for rook and queen attacks
+		if ('B_ROOK' in path_up) or ('B_ROOK' in path_down) or ('B_ROOK' in path_left) or ('B_ROOK' in path_right) or ('B_QUEEN' in path_up) or ('B_QUEEN' in path_down) or ('B_QUEEN' in path_left) or ('B_QUEEN' in path_right):
+			return true
+			
+		# checkign for bishop and queen
+		if ('B_BISHOP' in path_up_left) or ('B_BISHOP' in path_up_right) or ('B_BISHOP' in path_down_left) or ('B_BISHOP' in path_down_right) or ('B_QUEEN' in path_up_left) or ('B_QUEEN' in path_up_right) or ('B_QUEEN' in path_down_left) or ('B_QUEEN' in path_down_right):
+			return true
+		
+		 # checking for knight attacks
+		if ('B_KNIGHT' in path_knights):
+			return true
+		
+		# checking for pawn attacks
+		if len(path_up_left) > 1:
+			if path_up_left[1] == 'B_PAWN':
+				return true
+				
+		if len(path_up_right) > 1:
+			if path_up_right[1] == 'B_PAWN':
+				return true
+		
+		if len(path_down_left) > 1:
+			if path_down_left[1] == 'B_PAWN':
+				return true
+		
+		if len(path_down_right) > 1:
+			if path_down_right[1] == 'B_PAWN':
+				return true
+
+func black_in_check(column, row):
+	# lists
+	var path_up = [null]
+	var path_down = [null]
+	var path_left = [null]
+	var path_right = [null]
+	var path_up_left = [null]
+	var path_up_right = [null]
+	var path_down_left = [null]
+	var path_down_right = [null]
+	var path_knights = [null]
+	
+	# counters
+	var i_up = 0
+	var i_down = 0
+	var i_left = 0
+	var i_right = 0
+	var i_up_left = 0
+	var i_up_right = 0
+	var i_down_left = 0
+	var i_down_right = 0
+	
+	
+	# checking up
+	while ((path_up[len(path_up)-1] == null) or (path_up[len(path_up)-1] == 'MINE')) and (row+i_up < 7):
+		i_up += 1
+		path_up.append(piece_types[column][row+i_up])
+	
+	# checking down
+	while ((path_down[len(path_down)-1] == null) or (path_down[len(path_down)-1] == 'MINE')) and (row-i_down > 0):
+		i_down += 1
+		path_down.append(piece_types[column][row-i_down])
+	
+	# checking left
+	while ((path_left[len(path_left)-1] == null) or (path_left[len(path_left)-1] == 'MINE')) and (column-i_left > 0):
+		i_left += 1
+		path_left.append(piece_types[column-i_left][row])
+		
+	# checking right
+	while ((path_right[len(path_right)-1] == null) or (path_right[len(path_right)-1] == 'MINE')) and (column+i_right < 7):
+		i_right += 1
+		path_right.append(piece_types[column+i_right][row])
+	
+	# checking up_left
+	while ((path_up_left[len(path_up_left)-1] == null) or (path_up_left[len(path_up_left)-1] == 'MINE')) and (column-i_up_left > 0) and (row+i_up_left < 7):
+		i_up_left += 1
+		path_up_left.append(piece_types[column - i_up_left][row + i_up_left])
+	
+	# checking up_right
+	while ((path_up_right[len(path_up_right)-1] == null) or (path_up_right[len(path_up_right)-1] == 'MINE')) and (column+i_up_right < 7) and (row+i_up_right < 7):
+		i_up_right += 1
+		path_up_right.append(piece_types[column + i_up_right][row + i_up_right])
+	
+	# checking down_left
+	while ((path_down_left[len(path_down_left)-1] == null) or (path_down_left[len(path_down_left)-1] == 'MINE')) and (column-i_down_left > 0) and (row-i_down_left > 0):
+		i_down_left += 1
+		path_down_left.append(piece_types[column - i_down_left][row - i_down_left])
+	
+	# checking down_right
+	while ((path_down_right[len(path_down_right)-1] == null) or (path_down_right[len(path_down_right)-1] == 'MINE')) and (column+i_down_right < 7) and (row-i_down_right > 0):
+		i_down_right += 1
+		path_down_right.append(piece_types[column + i_down_right][row - i_down_right])
+	
+	# checking knight paths
+	if (column+2 <= 7):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column+2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column+2][row-1])
+	if (column-2 >= 0):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column-2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column-2][row-1])
+	if (row+2 <= 7):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row+2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row+2])
+	if (row-2 >= 0):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row-2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row-2])
+	
+	
+	# checking if black in check
+	if white_turn == false:
+		# checking for rook and queen attacks
+		if ('W_ROOK' in path_up) or ('W_ROOK' in path_down) or ('W_ROOK' in path_left) or ('W_ROOK' in path_right) or ('W_QUEEN' in path_up) or ('W_QUEEN' in path_down) or ('W_QUEEN' in path_left) or ('W_QUEEN' in path_right):
+			return true
+			
+		# checkign for bishop and queen
+		if ('W_BISHOP' in path_up_left) or ('W_BISHOP' in path_up_right) or ('W_BISHOP' in path_down_left) or ('W_BISHOP' in path_down_right) or ('W_QUEEN' in path_up_left) or ('W_QUEEN' in path_up_right) or ('W_QUEEN' in path_down_left) or ('W_QUEEN' in path_down_right):
+			return true
+		
+		 # checking for knight attacks
+		if ('W_KNIGHT' in path_knights):
+			return true
+		
+		# checking for pawn attacks
+		if len(path_up_left) > 1:
+			if path_up_left[1] == 'W_PAWN':
+				return true
+				
+		if len(path_up_right) > 1:
+			if path_up_right[1] == 'W_PAWN':
+				return true
+		
+		if len(path_down_left) > 1:
+			if path_down_left[1] == 'W_PAWN':
+				return true
+		
+		if len(path_down_right) > 1:
+			if path_down_right[1] == 'W_PAWN':
+				return true
+
+func white_in_checkmate(column, row):
+	var in_check = []
+	
+	# check the king's position and all squares around it
+	in_check.append(white_in_check(column, row))
+	if row != 7 and all_pieces[column][row+1] == null:
+		in_check.append(white_in_check(column, row+1))
+	if row != 0 and all_pieces[column][row-1] == null:
+		in_check.append(white_in_check(column, row-1))
+	
+	if column != 7 and all_pieces[column+1][row] == null:
+		in_check.append(white_in_check(column+1, row))
+	if (column != 7) and (row != 7) and all_pieces[column+1][row+1] == null:
+		in_check.append(white_in_check(column+1, row+1))
+	if (column != 7) and (row != 0) and all_pieces[column+1][row-1] == null:
+		in_check.append(white_in_check(column+1, row-1))
+	
+	if (column != 0) and all_pieces[column-1][row] == null:
+		in_check.append(white_in_check(column-1, row))
+	if (column != 0) and (row != 7) and all_pieces[column-1][row+1] == null:
+		in_check.append(white_in_check(column-1, row+1))
+	if (column != 0) and (row != 0) and all_pieces[column-1][row-1] == null:
+		in_check.append(white_in_check(column-1, row-1))
+	
+	# check if enemy piece can be killed
+	
+	
+	# in checkmate or not
+	if in_check.count(true) == len(in_check):
+		return true
+	else:
+		return false
+
+func black_in_checkmate(column, row):
+	var in_check = []
+	
+	# check the king's position and all squares around it
+	in_check.append(black_in_check(column, row))
+	if row != 7 and all_pieces[column][row+1] == null:
+		in_check.append(black_in_check(column, row+1))
+	if row != 0 and all_pieces[column][row-1] == null:
+		in_check.append(black_in_check(column, row-1))
+	
+	if column != 7 and all_pieces[column+1][row] == null:
+		in_check.append(black_in_check(column+1, row))
+	if (column != 7) and (row != 7) and all_pieces[column+1][row+1] == null:
+		in_check.append(black_in_check(column+1, row+1))
+	if (column != 7) and (row != 0) and all_pieces[column+1][row-1] == null:
+		in_check.append(black_in_check(column+1, row-1))
+	
+	if (column != 0) and all_pieces[column-1][row] == null:
+		in_check.append(black_in_check(column-1, row))
+	if (column != 0) and (row != 7) and all_pieces[column-1][row+1] == null:
+		in_check.append(black_in_check(column-1, row+1))
+	if (column != 0) and (row != 0) and all_pieces[column-1][row-1] == null:
+		in_check.append(black_in_check(column-1, row-1))
+	
+	# in checkmate or not
+	if in_check.count(true) == len(in_check):
+		return true
+	else:
+		return false
+
+func undo_invalid_move_in_check(column, row, selected_piece, selected_type, target_pos, direction):
+	# white king's position
+	var w_king_pos = find_index('W_KING')
+	
+	# if moved to empty space
+	if (target_pos == null) and (white_in_check(w_king_pos.x, w_king_pos.y)):
+		# update the piece array
+		all_pieces[column][row] = selected_piece
+		all_pieces[column + direction.x][row + direction.y] = null
+		
+		# update the type array
+		piece_types[column][row] = selected_type
+		piece_types[column + direction.x][row + direction.y] = null
+		
+		# update the grid
+		selected_piece.move(grid_to_pixel(column, row))
+		
+		# white should play again
+		white_turn = true
 
 
 
@@ -656,8 +1100,6 @@ func stepped_on_mine(column, row, direction, selected_piece, selected_type):
 	
 	# recognize movement to change turn
 	movement_occured = true
-
-
 
 
 #________________Buying and Setting Mines________________
