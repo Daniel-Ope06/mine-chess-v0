@@ -12,13 +12,13 @@ This game is standard chess with a few extra rules:
 
 ## Features already added:
 - Chess piece movements
-- Castling
 - Killing enemy pieces
 - Gold system
 - Mine system
 
-## Features to add:
+## Features to work on:
 - Fix the Check and Checkmate system
+- Castling
 - Add promotion system
 - Add Menu
 - Add Undo button
