@@ -1,6 +1,6 @@
 # Mine_Chess
 ## Game Description:
-This game is simply normal chess with a few extra rules:
+This game is standard chess with a few extra rules:
 - Killing enemy pieces gives gold
   - piece_value = {'PAWN':1, 'KNIGHT':3, 'BISHOP':3, 'ROOK':5, 'QUEEN':9, 'KING':0}
 - Gold can be used to buy mines
@@ -10,7 +10,7 @@ This game is simply normal chess with a few extra rules:
   - Check or Checkmate
   - One of the Kings step on a mine  
 
-## Feautures already added:
+## Features already added:
 - Chess piece movements
 - Castling
 - Killing enemy pieces
