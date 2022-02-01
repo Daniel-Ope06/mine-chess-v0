@@ -15,10 +15,10 @@ This game is standard chess with a few extra rules:
 - Killing enemy pieces
 - Gold system
 - Mine system
+- Castling
 
 ## Features to work on:
 - Fix the Check and Checkmate system
-- Castling
 - Add promotion system
 - Add Menu
 - Add Undo button
