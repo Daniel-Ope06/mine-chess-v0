@@ -44,7 +44,7 @@ onready var BuyMine: Button = $BuyMine
 onready var SetMine: Button = $SetMine
 onready var dissolveTimer = $DissolveTimer
 var button_pressed = 'Buy'
-var black_mines = 2
+var black_mines = 0
 var white_mines = 0
 
 # Gold system
@@ -305,13 +305,13 @@ func display_check_and_checkmate():
 		# show check
 		if (white_in_check(w_king_pos.x, w_king_pos.y)) and not(white_in_checkmate(w_king_pos.x, w_king_pos.y)):
 			$WhiteInCheck.visible = true
-		if (black_in_check(b_king_pos.x, b_king_pos.y)) and not(black_in_checkmate(w_king_pos.x, w_king_pos.y)):
+		if (black_in_check(b_king_pos.x, b_king_pos.y)) and not(black_in_checkmate(b_king_pos.x, b_king_pos.y)):
 			$BlackInCheck.visible = true
 			
 		# remove check
 		if not(white_in_check(w_king_pos.x, w_king_pos.y)) and not(white_in_checkmate(w_king_pos.x, w_king_pos.y)):
 			$WhiteInCheck.visible = false
-		if not(black_in_check(b_king_pos.x, b_king_pos.y)) and not(black_in_checkmate(w_king_pos.x, w_king_pos.y)):
+		if not(black_in_check(b_king_pos.x, b_king_pos.y)) and not(black_in_checkmate(b_king_pos.x, b_king_pos.y)):
 			$BlackInCheck.visible = false
 		
 		
@@ -582,10 +582,7 @@ func move_w_king(column, row, direction, selected_piece, target_pos, selected_ty
 				move_piece(column, row, selected_piece, selected_type, direction)
 				
 				# move rook
-				all_pieces[7][0].move(grid_to_pixel(5, 0))
-				piece_types[5][0] = 'W_ROOK'
-				all_pieces[7][0] = null
-				piece_types[7][0] = null
+				move_piece(7, 0, all_pieces[7][0], piece_types[7][0], Vector2(-2, 0))
 				
 			# queen side castling
 			if (direction.x == -2) and (piece_types[0][0] == 'W_ROOK') and check_castling(column, row, direction) and not(white_in_check(column-1, row)) and not(white_in_check(column-2, row)):
@@ -593,10 +590,7 @@ func move_w_king(column, row, direction, selected_piece, target_pos, selected_ty
 				move_piece(column, row, selected_piece, selected_type, direction)
 				
 				# move rook
-				all_pieces[0][0].move(grid_to_pixel(3, 0))
-				piece_types[3][0] = 'W_ROOK'
-				all_pieces[0][0] = null
-				piece_types[0][0] = null
+				move_piece(0, 0, all_pieces[0][0], piece_types[0][0], Vector2(3, 0))
 
 func move_b_king(column, row, direction, selected_piece, target_pos, selected_type, target_type):
 	if selected_type == "B_KING" and not(black_in_check(column+direction.x, row+direction.y)):
@@ -632,10 +626,7 @@ func move_b_king(column, row, direction, selected_piece, target_pos, selected_ty
 				move_piece(column, row, selected_piece, selected_type, direction)
 				
 				# move rook
-				all_pieces[7][7].move(grid_to_pixel(5, 7))
-				piece_types[5][7] = 'B_ROOK'
-				all_pieces[7][7] = null
-				piece_types[7][7] = null
+				move_piece(7, 7, all_pieces[7][7], piece_types[7][7], Vector2(-2, 0))
 				
 			# queen side castling
 			if (direction.x == -2) and (piece_types[0][7] == 'B_ROOK') and check_castling(column, row, direction) and not(black_in_check(column-1, row)) and not(black_in_check(column-2, row)):
@@ -643,10 +634,7 @@ func move_b_king(column, row, direction, selected_piece, target_pos, selected_ty
 				move_piece(column, row, selected_piece, selected_type, direction)
 				
 				# move rook
-				all_pieces[0][7].move(grid_to_pixel(3, 7))
-				piece_types[3][7] = 'B_ROOK'
-				all_pieces[0][7] = null
-				piece_types[0][7] = null
+				move_piece(0, 7, all_pieces[0][7], piece_types[0][7], Vector2(3, 0))
 
 
 #________________Checking conditions________________

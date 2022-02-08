@@ -1,0 +1,114 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Assets/press-start/prstart.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://Scripts/MainMenu.gd" type="Script" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 95
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 75
+font_data = ExtResource( 1 )
+
+[node name="MainMenu" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 1276.0
+margin_bottom = 715.0
+color = Color( 0.164706, 0.172549, 0.172549, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_right = 1276.0
+margin_bottom = 715.0
+custom_constants/margin_right = 200
+custom_constants/margin_top = 75
+custom_constants/margin_left = 200
+custom_constants/margin_bottom = 100
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+margin_left = 200.0
+margin_top = 75.0
+margin_right = 1150.0
+margin_bottom = 615.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+margin_right = 950.0
+margin_bottom = 190.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+custom_colors/font_color = Color( 0.654902, 0.690196, 0.717647, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "Mine Chess"
+align = 1
+valign = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+margin_top = 194.0
+margin_right = 950.0
+margin_bottom = 540.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 50
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+margin_right = 950.0
+margin_bottom = 82.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 50
+custom_constants/margin_left = 50
+
+[node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/MarginContainer"]
+margin_left = 50.0
+margin_right = 900.0
+margin_bottom = 82.0
+custom_colors/font_color = Color( 0.654902, 0.690196, 0.717647, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Play"
+
+[node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+margin_top = 132.0
+margin_right = 950.0
+margin_bottom = 214.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 50
+custom_constants/margin_left = 50
+
+[node name="OptionsButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/MarginContainer2"]
+margin_left = 50.0
+margin_right = 900.0
+margin_bottom = 82.0
+custom_colors/font_color = Color( 0.654902, 0.690196, 0.717647, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Options"
+
+[node name="MarginContainer3" type="MarginContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+margin_top = 264.0
+margin_right = 950.0
+margin_bottom = 346.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 50
+custom_constants/margin_left = 50
+
+[node name="CreditsButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/MarginContainer3"]
+margin_left = 50.0
+margin_right = 900.0
+margin_bottom = 82.0
+custom_colors/font_color = Color( 0.654902, 0.690196, 0.717647, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Credits"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/VBoxContainer/MarginContainer/PlayButton" to="." method="_on_PlayButton_pressed"]

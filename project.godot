@@ -39,7 +39,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Mine Chess Prototype"
-run/main_scene="res://UI/ChessDisplay.tscn"
+run/main_scene="res://UI/MainMenu.tscn"
 config/icon="res://icon.png"
 
 [autoload]
