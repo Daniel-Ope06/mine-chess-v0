@@ -16,11 +16,11 @@ This game is standard chess with a few extra rules:
 - Gold system
 - Mine system
 - Castling
+- Add Menu
 
 ## Features to work on:
 - Fix the Check and Checkmate system
 - Add promotion system
-- Add Menu
 - Add Undo button
 - Add Tutorial section
 
