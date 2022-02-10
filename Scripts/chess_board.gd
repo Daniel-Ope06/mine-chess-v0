@@ -338,6 +338,9 @@ func display_check_and_checkmate():
 #________________Chess Movements________________
 # Pawn movement
 func move_w_pawn(column, row, direction, selected_piece, target_pos, selected_type, target_type):
+	var w_king_pos = find_index('W_KING')
+	var b_king_pos = find_index('B_KING')
+	
 	if selected_type == "W_PAWN":
 		# move to empty space
 		if target_pos == null and direction.x == 0:
@@ -789,35 +792,34 @@ func white_in_check(column, row):
 	
 	
 	# checking if white in check
-	if white_turn == true:
-		# checking for rook and queen attacks
-		if ('B_ROOK' in path_up) or ('B_ROOK' in path_down) or ('B_ROOK' in path_left) or ('B_ROOK' in path_right) or ('B_QUEEN' in path_up) or ('B_QUEEN' in path_down) or ('B_QUEEN' in path_left) or ('B_QUEEN' in path_right):
+	# checking for rook and queen attacks
+	if ('B_ROOK' in path_up) or ('B_ROOK' in path_down) or ('B_ROOK' in path_left) or ('B_ROOK' in path_right) or ('B_QUEEN' in path_up) or ('B_QUEEN' in path_down) or ('B_QUEEN' in path_left) or ('B_QUEEN' in path_right):
+		return true
+		
+	# checkign for bishop and queen
+	if ('B_BISHOP' in path_up_left) or ('B_BISHOP' in path_up_right) or ('B_BISHOP' in path_down_left) or ('B_BISHOP' in path_down_right) or ('B_QUEEN' in path_up_left) or ('B_QUEEN' in path_up_right) or ('B_QUEEN' in path_down_left) or ('B_QUEEN' in path_down_right):
+		return true
+	
+	 # checking for knight attacks
+	if ('B_KNIGHT' in path_knights):
+		return true
+	
+	# checking for pawn attacks
+	if len(path_up_left) > 1:
+		if path_up_left[1] == 'B_PAWN':
 			return true
 			
-		# checkign for bishop and queen
-		if ('B_BISHOP' in path_up_left) or ('B_BISHOP' in path_up_right) or ('B_BISHOP' in path_down_left) or ('B_BISHOP' in path_down_right) or ('B_QUEEN' in path_up_left) or ('B_QUEEN' in path_up_right) or ('B_QUEEN' in path_down_left) or ('B_QUEEN' in path_down_right):
+	if len(path_up_right) > 1:
+		if path_up_right[1] == 'B_PAWN':
 			return true
-		
-		 # checking for knight attacks
-		if ('B_KNIGHT' in path_knights):
+	
+	if len(path_down_left) > 1:
+		if path_down_left[1] == 'B_PAWN':
 			return true
-		
-		# checking for pawn attacks
-		if len(path_up_left) > 1:
-			if path_up_left[1] == 'B_PAWN':
-				return true
-				
-		if len(path_up_right) > 1:
-			if path_up_right[1] == 'B_PAWN':
-				return true
-		
-		if len(path_down_left) > 1:
-			if path_down_left[1] == 'B_PAWN':
-				return true
-		
-		if len(path_down_right) > 1:
-			if path_down_right[1] == 'B_PAWN':
-				return true
+	
+	if len(path_down_right) > 1:
+		if path_down_right[1] == 'B_PAWN':
+			return true
 
 func black_in_check(column, row):
 	# lists
@@ -905,38 +907,36 @@ func black_in_check(column, row):
 			path_knights.append(piece_types[column-1][row-2])
 	
 	
-	# checking if black in check
-	if white_turn == false:
-		# checking for rook and queen attacks
-		if ('W_ROOK' in path_up) or ('W_ROOK' in path_down) or ('W_ROOK' in path_left) or ('W_ROOK' in path_right) or ('W_QUEEN' in path_up) or ('W_QUEEN' in path_down) or ('W_QUEEN' in path_left) or ('W_QUEEN' in path_right):
+# checking if black in check
+	# checking for rook and queen attacks
+	if ('W_ROOK' in path_up) or ('W_ROOK' in path_down) or ('W_ROOK' in path_left) or ('W_ROOK' in path_right) or ('W_QUEEN' in path_up) or ('W_QUEEN' in path_down) or ('W_QUEEN' in path_left) or ('W_QUEEN' in path_right):
+		return true
+		
+	# checkign for bishop and queen
+	if ('W_BISHOP' in path_up_left) or ('W_BISHOP' in path_up_right) or ('W_BISHOP' in path_down_left) or ('W_BISHOP' in path_down_right) or ('W_QUEEN' in path_up_left) or ('W_QUEEN' in path_up_right) or ('W_QUEEN' in path_down_left) or ('W_QUEEN' in path_down_right):
+		return true
+	
+	 # checking for knight attacks
+	if ('W_KNIGHT' in path_knights):
+		return true
+	
+	# checking for pawn attacks
+	if len(path_up_left) > 1:
+		if path_up_left[1] == 'W_PAWN':
 			return true
 			
-		# checkign for bishop and queen
-		if ('W_BISHOP' in path_up_left) or ('W_BISHOP' in path_up_right) or ('W_BISHOP' in path_down_left) or ('W_BISHOP' in path_down_right) or ('W_QUEEN' in path_up_left) or ('W_QUEEN' in path_up_right) or ('W_QUEEN' in path_down_left) or ('W_QUEEN' in path_down_right):
+	if len(path_up_right) > 1:
+		if path_up_right[1] == 'W_PAWN':
 			return true
-		
-		 # checking for knight attacks
-		if ('W_KNIGHT' in path_knights):
+	
+	if len(path_down_left) > 1:
+		if path_down_left[1] == 'W_PAWN':
 			return true
-		
-		# checking for pawn attacks
-		if len(path_up_left) > 1:
-			if path_up_left[1] == 'W_PAWN':
-				return true
-				
-		if len(path_up_right) > 1:
-			if path_up_right[1] == 'W_PAWN':
-				return true
-		
-		if len(path_down_left) > 1:
-			if path_down_left[1] == 'W_PAWN':
-				return true
-		
-		if len(path_down_right) > 1:
-			if path_down_right[1] == 'W_PAWN':
-				return true
+	
+	if len(path_down_right) > 1:
+		if path_down_right[1] == 'W_PAWN':
+			return true
 
-# Currently working on this ------------------------------------------------------------------------
 func white_in_checkmate(column, row):
 	var in_check = []
 	
@@ -1047,97 +1047,144 @@ func white_in_checkmate(column, row):
 			path_knights.append(piece_types[column-1][row-2])
 	
 	
-	# Checking if pieces can be killed
+# Checking if pieces can be killed or blocked
+	var i = 0
 	# path_up
 	if path_up.count(null) != len(path_up):
 		if ('B_ROOK' in path_up):
-			if black_in_check(column, row + path_up.find('B_ROOK')):
-				return false
+			# can be killed?
+			in_check.append(not(black_in_check(column, row + path_up.find('B_ROOK'))))
+			i = 1
+			# can be blocked?
+			while path_up.find('B_ROOK') - i > 0:
+				in_check.append(not(white_can_block(column, row + (path_up.find('B_ROOK') - i))))
+				i += 1
 		if ('B_QUEEN' in path_up):
-			if black_in_check(column, row + path_up.find('B_QUEEN')):
-				return false
-				
+			in_check.append(not(black_in_check(column, row + path_up.find('B_QUEEN'))))
+			i = 1
+			while path_up.find('B_QUEEN') - i > 0:
+				in_check.append(not(white_can_block(column, row + (path_up.find('B_QUEEN') - i))))
+				i += 1
+	
 	# path_down
 	if path_down.count(null) != len(path_down):
 		if ('B_ROOK' in path_down):
-			if black_in_check(column, row - path_down.find('B_ROOK')):
-				return false
+			in_check.append(not(black_in_check(column, row - path_down.find('B_ROOK'))))
+			i = 1
+			while path_down.find('B_ROOK') - i > 0:
+				in_check.append(not(white_can_block(column, row - (path_down.find('B_ROOK') - i))))
+				i += 1
 		if ('B_QUEEN' in path_up):
-			if black_in_check(column, row - path_down.find('B_QUEEN')):
-				return false
-				
+			in_check.apppend(not(black_in_check(column, row - path_down.find('B_QUEEN'))))
+			i = 1
+			while path_up.find('B_QUEEN') - i > 0:
+				in_check.apppend(not(white_can_block(column, row - (path_down.find('B_QUEEN') - i))))
+				i += 1
+	
 	# path_left
 	if path_left.count(null) != len(path_left):
 		if ('B_ROOK' in path_left):
-			if black_in_check(column - path_left.find('B_ROOK'), row):
-				return false
+			in_check.append(not(black_in_check(column - path_left.find('B_ROOK'), row)))
+			i = 1
+			while path_down.find('B_ROOK') - i > 0:
+				in_check.append(not(white_can_block(column - (path_left.find('B_ROOK')-1), row)))
+				i += 1
 		if ('B_QUEEN' in path_left):
-			if black_in_check(column - path_left.find('B_QUEEN'), row):
-				return false
-				
+			in_check.append(not(black_in_check(column - path_left.find('B_QUEEN'), row)))
+			i = 1
+			while path_up.find('B_QUEEN') - i > 0:
+				in_check.append(not(white_can_block(column - (path_left.find('B_QUEEN')-1), row)))
+				i += 1
+	
 	# path_right
 	if path_right.count(null) != len(path_right):
 		if ('B_ROOK' in path_right):
-			if black_in_check(column + path_right.find('B_ROOK'), row):
-				return false
+			in_check.append(not(black_in_check(column + path_right.find('B_ROOK'), row)))
+			i = 1
+			while path_down.find('B_ROOK') - i > 0:
+				in_check.append(not(white_can_block(column + (path_right.find('B_ROOK')-1), row)))
+				i += 1
 		if ('B_QUEEN' in path_right):
-			if black_in_check(column + path_right.find('B_QUEEN'), row):
-				return false
-				
+			in_check.append(not(black_in_check(column + path_right.find('B_QUEEN'), row)))
+			i = 1
+			while path_up.find('B_QUEEN') - i > 0:
+				in_check.append(not(white_can_block(column + (path_right.find('B_QUEEN')-i), row)))
+				i += 1
+	
 	# path_up_left
 	if path_up_left.count(null) != len(path_up_left):
 		if ('B_BISHOP' in path_up_left):
-			if black_in_check(column - path_up_left.find('B_BISHOP'), row + path_up_left.find('B_BISHOP')):
-				return false
+			in_check.append(not(black_in_check(column - path_up_left.find('B_BISHOP'), row + path_up_left.find('B_BISHOP'))))
+			i = 1
+			while path_up_left.find('B_BISHOP') - i >0:
+				in_check.append(not(white_can_block(column - (path_up_left.find('B_BISHOP')-i), row + (path_up_left.find('B_BISHOP')-i))))
+				i += 1
 		if ('B_QUEEN' in path_up_left):
-			if black_in_check(column - path_up_left.find('B_QUEEN'), row + path_up_left.find('B_QUEEN')):
-				return false
+			in_check.append(not(black_in_check(column - path_up_left.find('B_QUEEN'), row + path_up_left.find('B_QUEEN'))))
+			i = 1
+			while path_up.find('B_QUEEN') - i > 0:
+				in_check.append(not(white_can_block(column - (path_up_left.find('B_QUEEN')-i), row + (path_up_left.find('B_QUEEN')-i))))
+				i += 1
 		if path_up_left[1] == 'B_PAWN':
-			if black_in_check(column-1, row+1):
-				return false
+			in_check.append(not(black_in_check(column-1, row+1)))
 				
 	# path_up_right
 	if path_up_right.count(null) != len(path_up_right):
 		if ('B_BISHOP' in path_up_right):
-			if black_in_check(column + path_up_right.find('B_BISHOP'), row + path_up_right.find('B_BISHOP')):
-				return false
+			in_check.append(not(black_in_check(column + path_up_right.find('B_BISHOP'), row + path_up_right.find('B_BISHOP'))))
+			i = 1
+			while path_up_right.find('B_BISHOP') - i >0:
+				in_check.append(not(white_can_block(column + (path_up_right.find('B_BISHOP')-i), row + (path_up_right.find('B_BISHOP')-i))))
+				i += 1
 		if ('B_QUEEN' in path_up_right):
-			if black_in_check(column + path_up_right.find('B_QUEEN'), row + path_up_right.find('B_QUEEN')):
-				return false
+			in_check.append(not(black_in_check(column + path_up_right.find('B_QUEEN'), row + path_up_right.find('B_QUEEN'))))
+			i = 1
+			while path_up_right.find('B_QUEEN') - i > 0:
+				in_check.append(not(white_can_block(column + path_up_right.find('B_QUEEN') - i, row + path_up_right.find('B_QUEEN') - i)))
+				i += 1
 		if path_up_right[1] == 'B_PAWN':
-			if black_in_check(column+1, row+1):
-				return false
+			in_check.append(not(black_in_check(column+1, row+1)))
 				
 	# path_down_left
 	if path_down_left.count(null) != len(path_down_left):
 		if ('B_BISHOP' in path_down_left):
-			if black_in_check(column - path_down_left.find('B_BISHOP'), row - path_down_left.find('B_BISHOP')):
-				return false
+			in_check.append(not(black_in_check(column - path_down_left.find('B_BISHOP'), row - path_down_left.find('B_BISHOP'))))
+			i = 1
+			while path_down_left.find('B_BISHOP') - i >0:
+				in_check.append(not(white_can_block(column - (path_down_left.find('B_BISHOP')-i), row - (path_down_left.find('B_BISHOP')-i))))
+				i += 1
 		if ('B_QUEEN' in path_down_left):
-			if black_in_check(column - path_down_left.find('B_QUEEN'), row - path_down_left.find('B_QUEEN')):
-				return false
+			in_check.append(not(black_in_check(column - path_down_left.find('B_QUEEN'), row - path_down_left.find('B_QUEEN'))))
+			i = 1
+			while path_down_left.find('B_QUEEN') - i > 0:
+				in_check.append(not(white_can_block(column - (path_down_left.find('B_QUEEN')-i), row - (path_down_left.find('B_QUEEN')-i))))
+				i += 1
 		if path_down_left[1] == 'B_PAWN':
-			if black_in_check(column-1, row-1):
-				return false
+			in_check.append(not(black_in_check(column-1, row-1)))
 				
 	# path_down_right
 	if path_down_right.count(null) != len(path_down_right):
 		if ('B_BISHOP' in path_down_right):
-			if black_in_check(column + path_down_right.find('B_BISHOP'), row - path_down_right.find('B_BISHOP')):
-				return false
+			in_check.append(not(black_in_check(column + path_down_right.find('B_BISHOP'), row - path_down_right.find('B_BISHOP'))))
+			i = 1
+			while path_down_right.find('B_BISHOP') - i >0:
+				in_check.append(not(white_can_block(column + (path_down_right.find('B_BISHOP')-i), row - (path_down_right.find('B_BISHOP')-i))))
+				i += 1
 		if ('B_QUEEN' in path_down_right):
-			if black_in_check(column + path_down_right.find('B_QUEEN'), row - path_down_right.find('B_QUEEN')):
-				return false
+			in_check.append(not(black_in_check(column + path_down_right.find('B_QUEEN'), row - path_down_right.find('B_QUEEN'))))
+			i = 1
+			while path_down_right.find('B_QUEEN') - i > 0:
+				in_check.append(not(white_can_block(column + (path_down_right.find('B_QUEEN')-i), row - (path_down_right.find('B_QUEEN')-i))))
+				i += 1
 		if path_down_right[1] == 'B_PAWN':
-			if black_in_check(column+1, row-1):
-				return false
+			in_check.append(not(black_in_check(column+1, row-1)))
 	
-	# can king move
+	
+	# chekmate or not
 	if in_check.count(true) == len(in_check):
 		return true
 	else:
 		return false
-# --------------------------------------------------------------------------------------------------
 
 func black_in_checkmate(column, row):
 	var in_check = []
@@ -1163,32 +1210,436 @@ func black_in_checkmate(column, row):
 	if (column != 0) and (row != 0) and all_pieces[column-1][row-1] == null:
 		in_check.append(black_in_check(column-1, row-1))
 	
+	# check if enemy piece can be killed or blocked
+	# lists
+	var path_up = [null]
+	var path_down = [null]
+	var path_left = [null]
+	var path_right = [null]
+	var path_up_left = [null]
+	var path_up_right = [null]
+	var path_down_left = [null]
+	var path_down_right = [null]
+	var path_knights = [null]
+	
+	# counters
+	var i_up = 0
+	var i_down = 0
+	var i_left = 0
+	var i_right = 0
+	var i_up_left = 0
+	var i_up_right = 0
+	var i_down_left = 0
+	var i_down_right = 0
+	
+	
+	# checking up
+	while ((path_up[len(path_up)-1] == null) or (path_up[len(path_up)-1] == 'MINE')) and (row+i_up < 7):
+		i_up += 1
+		path_up.append(piece_types[column][row+i_up])
+	
+	# checking down
+	while ((path_down[len(path_down)-1] == null) or (path_down[len(path_down)-1] == 'MINE')) and (row-i_down > 0):
+		i_down += 1
+		path_down.append(piece_types[column][row-i_down])
+	
+	# checking left
+	while ((path_left[len(path_left)-1] == null) or (path_left[len(path_left)-1] == 'MINE')) and (column-i_left > 0):
+		i_left += 1
+		path_left.append(piece_types[column-i_left][row])
+		
+	# checking right
+	while ((path_right[len(path_right)-1] == null) or (path_right[len(path_right)-1] == 'MINE')) and (column+i_right < 7):
+		i_right += 1
+		path_right.append(piece_types[column+i_right][row])
+	
+	# checking up_left
+	while ((path_up_left[len(path_up_left)-1] == null) or (path_up_left[len(path_up_left)-1] == 'MINE')) and (column-i_up_left > 0) and (row+i_up_left < 7):
+		i_up_left += 1
+		path_up_left.append(piece_types[column - i_up_left][row + i_up_left])
+	
+	# checking up_right
+	while ((path_up_right[len(path_up_right)-1] == null) or (path_up_right[len(path_up_right)-1] == 'MINE')) and (column+i_up_right < 7) and (row+i_up_right < 7):
+		i_up_right += 1
+		path_up_right.append(piece_types[column + i_up_right][row + i_up_right])
+	
+	# checking down_left
+	while ((path_down_left[len(path_down_left)-1] == null) or (path_down_left[len(path_down_left)-1] == 'MINE')) and (column-i_down_left > 0) and (row-i_down_left > 0):
+		i_down_left += 1
+		path_down_left.append(piece_types[column - i_down_left][row - i_down_left])
+	
+	# checking down_right
+	while ((path_down_right[len(path_down_right)-1] == null) or (path_down_right[len(path_down_right)-1] == 'MINE')) and (column+i_down_right < 7) and (row-i_down_right > 0):
+		i_down_right += 1
+		path_down_right.append(piece_types[column + i_down_right][row - i_down_right])
+	
+	# checking knight paths
+	if (column+2 <= 7):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column+2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column+2][row-1])
+	if (column-2 >= 0):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column-2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column-2][row-1])
+	if (row+2 <= 7):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row+2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row+2])
+	if (row-2 >= 0):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row-2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row-2])
+
+# Checking if pieces can be killed or blocked
+	var i = 0
+	# path_up
+	if path_up.count(null) != len(path_up):
+		if ('W_ROOK' in path_up):
+			# can be killed?
+			in_check.append(not(white_in_check(column, row + path_up.find('W_ROOK'))))
+			i = 1
+			# can be blocked?
+			while path_up.find('W_ROOK') - i > 0:
+				in_check.append(not(black_can_block(column, row + (path_up.find('W_ROOK') - i))))
+				i += 1
+		if ('W_QUEEN' in path_up):
+			in_check.append(not(white_in_check(column, row + path_up.find('W_QUEEN'))))
+			i = 1
+			while path_up.find('W_QUEEN') - i > 0:
+				in_check.append(not(black_can_block(column, row + (path_up.find('W_QUEEN') - i))))
+				i += 1
+	
+	# path_down
+	if path_down.count(null) != len(path_down):
+		if ('W_ROOK' in path_down):
+			in_check.append(not(white_in_check(column, row - path_down.find('W_ROOK'))))
+			i = 1
+			while path_down.find('W_ROOK') - i > 0:
+				in_check.append(not(black_can_block(column, row - (path_down.find('W_ROOK') - i))))
+				i += 1
+		if ('W_QUEEN' in path_up):
+			in_check.apppend(not(white_in_check(column, row - path_down.find('W_QUEEN'))))
+			i = 1
+			while path_up.find('W_QUEEN') - i > 0:
+				in_check.apppend(not(black_can_block(column, row - (path_down.find('W_QUEEN') - i))))
+				i += 1
+	
+	# path_left
+	if path_left.count(null) != len(path_left):
+		if ('W_ROOK' in path_left):
+			in_check.append(not(white_in_check(column - path_left.find('W_ROOK'), row)))
+			i = 1
+			while path_down.find('W_ROOK') - i > 0:
+				in_check.append(not(black_can_block(column - (path_left.find('W_ROOK')-1), row)))
+				i += 1
+		if ('W_QUEEN' in path_left):
+			in_check.append(not(white_in_check(column - path_left.find('W_QUEEN'), row)))
+			i = 1
+			while path_up.find('W_QUEEN') - i > 0:
+				in_check.append(not(black_can_block(column - (path_left.find('W_QUEEN')-1), row)))
+				i += 1
+	
+	# path_right
+	if path_right.count(null) != len(path_right):
+		if ('W_ROOK' in path_right):
+			in_check.append(not(white_in_check(column + path_right.find('W_ROOK'), row)))
+			i = 1
+			while path_down.find('W_ROOK') - i > 0:
+				in_check.append(not(black_can_block(column + (path_right.find('W_ROOK')-1), row)))
+				i += 1
+		if ('W_QUEEN' in path_right):
+			in_check.append(not(white_in_check(column + path_right.find('W_QUEEN'), row)))
+			i = 1
+			while path_up.find('W_QUEEN') - i > 0:
+				in_check.append(not(black_can_block(column + (path_right.find('W_QUEEN')-i), row)))
+				i += 1
+	
+	# path_up_left
+	if path_up_left.count(null) != len(path_up_left):
+		if ('W_BISHOP' in path_up_left):
+			in_check.append(not(white_in_check(column - path_up_left.find('W_BISHOP'), row + path_up_left.find('W_BISHOP'))))
+			i = 1
+			while path_up_left.find('W_BISHOP') - i >0:
+				in_check.append(not(black_can_block(column - (path_up_left.find('W_BISHOP')-i), row + (path_up_left.find('W_BISHOP')-i))))
+				i += 1
+		if ('W_QUEEN' in path_up_left):
+			in_check.append(not(white_in_check(column - path_up_left.find('W_QUEEN'), row + path_up_left.find('W_QUEEN'))))
+			i = 1
+			while path_up.find('W_QUEEN') - i > 0:
+				in_check.append(not(black_can_block(column - (path_up_left.find('W_QUEEN')-i), row + (path_up_left.find('W_QUEEN')-i))))
+				i += 1
+		if path_up_left[1] == 'W_PAWN':
+			in_check.append(not(white_in_check(column-1, row+1)))
+				
+	# path_up_right
+	if path_up_right.count(null) != len(path_up_right):
+		if ('W_BISHOP' in path_up_right):
+			in_check.append(not(white_in_check(column + path_up_right.find('W_BISHOP'), row + path_up_right.find('W_BISHOP'))))
+			i = 1
+			while path_up_right.find('W_BISHOP') - i >0:
+				in_check.append(not(black_can_block(column + (path_up_right.find('W_BISHOP')-i), row + (path_up_right.find('W_BISHOP')-i))))
+				i += 1
+		if ('W_QUEEN' in path_up_right):
+			in_check.append(not(white_in_check(column + path_up_right.find('W_QUEEN'), row + path_up_right.find('W_QUEEN'))))
+			i = 1
+			while path_up_right.find('W_QUEEN') - i > 0:
+				in_check.append(not(black_can_block(column + path_up_right.find('W_QUEEN') - i, row + path_up_right.find('W_QUEEN') - i)))
+				i += 1
+		if path_up_right[1] == 'W_PAWN':
+			in_check.append(not(white_in_check(column+1, row+1)))
+				
+	# path_down_left
+	if path_down_left.count(null) != len(path_down_left):
+		if ('W_BISHOP' in path_down_left):
+			in_check.append(not(white_in_check(column - path_down_left.find('W_BISHOP'), row - path_down_left.find('W_BISHOP'))))
+			i = 1
+			while path_down_left.find('W_BISHOP') - i >0:
+				in_check.append(not(black_can_block(column - (path_down_left.find('W_BISHOP')-i), row - (path_down_left.find('W_BISHOP')-i))))
+				i += 1
+		if ('W_QUEEN' in path_down_left):
+			in_check.append(not(white_in_check(column - path_down_left.find('W_QUEEN'), row - path_down_left.find('W_QUEEN'))))
+			i = 1
+			while path_down_left.find('W_QUEEN') - i > 0:
+				in_check.append(not(black_can_block(column - (path_down_left.find('W_QUEEN')-i), row - (path_down_left.find('W_QUEEN')-i))))
+				i += 1
+		if path_down_left[1] == 'W_PAWN':
+			in_check.append(not(white_in_check(column-1, row-1)))
+				
+	# path_down_right
+	if path_down_right.count(null) != len(path_down_right):
+		if ('W_BISHOP' in path_down_right):
+			in_check.append(not(white_in_check(column + path_down_right.find('W_BISHOP'), row - path_down_right.find('W_BISHOP'))))
+			i = 1
+			while path_down_right.find('W_BISHOP') - i >0:
+				in_check.append(not(black_can_block(column + (path_down_right.find('W_BISHOP')-i), row - (path_down_right.find('W_BISHOP')-i))))
+				i += 1
+		if ('W_QUEEN' in path_down_right):
+			in_check.append(not(white_in_check(column + path_down_right.find('W_QUEEN'), row - path_down_right.find('W_QUEEN'))))
+			i = 1
+			while path_down_right.find('W_QUEEN') - i > 0:
+				in_check.append(not(black_can_block(column + (path_down_right.find('W_QUEEN')-i), row - (path_down_right.find('W_QUEEN')-i))))
+				i += 1
+		if path_down_right[1] == 'W_PAWN':
+			in_check.append(not(white_in_check(column+1, row-1)))
+	
+	
 	# in checkmate or not
 	if in_check.count(true) == len(in_check):
 		return true
 	else:
 		return false
 
-func undo_invalid_move_in_check(column, row, selected_piece, selected_type, target_pos, direction):
-	# white king's position
-	var w_king_pos = find_index('W_KING')
+func white_can_block(column, row):
+	# lists
+	var path_up = [null]
+	var path_down = [null]
+	var path_left = [null]
+	var path_right = [null]
+	var path_up_left = [null]
+	var path_up_right = [null]
+	var path_down_left = [null]
+	var path_down_right = [null]
+	var path_knights = [null]
 	
-	# if moved to empty space
-	if (target_pos == null) and (white_in_check(w_king_pos.x, w_king_pos.y)):
-		# update the piece array
-		all_pieces[column][row] = selected_piece
-		all_pieces[column + direction.x][row + direction.y] = null
+	# counters
+	var i_up = 0
+	var i_down = 0
+	var i_left = 0
+	var i_right = 0
+	var i_up_left = 0
+	var i_up_right = 0
+	var i_down_left = 0
+	var i_down_right = 0
+	
+	
+	# checking up
+	while ((path_up[len(path_up)-1] == null) or (path_up[len(path_up)-1] == 'MINE')) and (row+i_up < 7):
+		i_up += 1
+		path_up.append(piece_types[column][row+i_up])
+	
+	# checking down
+	while ((path_down[len(path_down)-1] == null) or (path_down[len(path_down)-1] == 'MINE')) and (row-i_down > 0):
+		i_down += 1
+		path_down.append(piece_types[column][row-i_down])
+	
+	# checking left
+	while ((path_left[len(path_left)-1] == null) or (path_left[len(path_left)-1] == 'MINE')) and (column-i_left > 0):
+		i_left += 1
+		path_left.append(piece_types[column-i_left][row])
 		
-		# update the type array
-		piece_types[column][row] = selected_type
-		piece_types[column + direction.x][row + direction.y] = null
+	# checking right
+	while ((path_right[len(path_right)-1] == null) or (path_right[len(path_right)-1] == 'MINE')) and (column+i_right < 7):
+		i_right += 1
+		path_right.append(piece_types[column+i_right][row])
+	
+	# checking up_left
+	while ((path_up_left[len(path_up_left)-1] == null) or (path_up_left[len(path_up_left)-1] == 'MINE')) and (column-i_up_left > 0) and (row+i_up_left < 7):
+		i_up_left += 1
+		path_up_left.append(piece_types[column - i_up_left][row + i_up_left])
+	
+	# checking up_right
+	while ((path_up_right[len(path_up_right)-1] == null) or (path_up_right[len(path_up_right)-1] == 'MINE')) and (column+i_up_right < 7) and (row+i_up_right < 7):
+		i_up_right += 1
+		path_up_right.append(piece_types[column + i_up_right][row + i_up_right])
+	
+	# checking down_left
+	while ((path_down_left[len(path_down_left)-1] == null) or (path_down_left[len(path_down_left)-1] == 'MINE')) and (column-i_down_left > 0) and (row-i_down_left > 0):
+		i_down_left += 1
+		path_down_left.append(piece_types[column - i_down_left][row - i_down_left])
+	
+	# checking down_right
+	while ((path_down_right[len(path_down_right)-1] == null) or (path_down_right[len(path_down_right)-1] == 'MINE')) and (column+i_down_right < 7) and (row-i_down_right > 0):
+		i_down_right += 1
+		path_down_right.append(piece_types[column + i_down_right][row - i_down_right])
+	
+	# checking knight paths
+	if (column+2 <= 7):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column+2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column+2][row-1])
+	if (column-2 >= 0):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column-2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column-2][row-1])
+	if (row+2 <= 7):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row+2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row+2])
+	if (row-2 >= 0):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row-2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row-2])
+	
+	
+# checking if black in check
+	# checking for rook and queen attacks
+	if ('W_ROOK' in path_up) or ('W_ROOK' in path_down) or ('W_ROOK' in path_left) or ('W_ROOK' in path_right) or ('W_QUEEN' in path_up) or ('W_QUEEN' in path_down) or ('W_QUEEN' in path_left) or ('W_QUEEN' in path_right):
+		return true
 		
-		# update the grid
-		selected_piece.move(grid_to_pixel(column, row))
-		
-		# white should play again
-		white_turn = true
+	# checkign for bishop and queen
+	if ('W_BISHOP' in path_up_left) or ('W_BISHOP' in path_up_right) or ('W_BISHOP' in path_down_left) or ('W_BISHOP' in path_down_right) or ('W_QUEEN' in path_up_left) or ('W_QUEEN' in path_up_right) or ('W_QUEEN' in path_down_left) or ('W_QUEEN' in path_down_right):
+		return true
+	
+	 # checking for knight attacks
+	if ('W_KNIGHT' in path_knights):
+		return true
+	
+	# checking for pawn attacks
+	if len(path_down) > 1:
+		if path_down[1] == 'W_PAWN':
+			return true
 
+func black_can_block(column, row):
+	# lists
+	var path_up = [null]
+	var path_down = [null]
+	var path_left = [null]
+	var path_right = [null]
+	var path_up_left = [null]
+	var path_up_right = [null]
+	var path_down_left = [null]
+	var path_down_right = [null]
+	var path_knights = [null]
+	
+	# counters
+	var i_up = 0
+	var i_down = 0
+	var i_left = 0
+	var i_right = 0
+	var i_up_left = 0
+	var i_up_right = 0
+	var i_down_left = 0
+	var i_down_right = 0
+	
+	
+	# checking up
+	while ((path_up[len(path_up)-1] == null) or (path_up[len(path_up)-1] == 'MINE')) and (row+i_up < 7):
+		i_up += 1
+		path_up.append(piece_types[column][row+i_up])
+	
+	# checking down
+	while ((path_down[len(path_down)-1] == null) or (path_down[len(path_down)-1] == 'MINE')) and (row-i_down > 0):
+		i_down += 1
+		path_down.append(piece_types[column][row-i_down])
+	
+	# checking left
+	while ((path_left[len(path_left)-1] == null) or (path_left[len(path_left)-1] == 'MINE')) and (column-i_left > 0):
+		i_left += 1
+		path_left.append(piece_types[column-i_left][row])
+		
+	# checking right
+	while ((path_right[len(path_right)-1] == null) or (path_right[len(path_right)-1] == 'MINE')) and (column+i_right < 7):
+		i_right += 1
+		path_right.append(piece_types[column+i_right][row])
+	
+	# checking up_left
+	while ((path_up_left[len(path_up_left)-1] == null) or (path_up_left[len(path_up_left)-1] == 'MINE')) and (column-i_up_left > 0) and (row+i_up_left < 7):
+		i_up_left += 1
+		path_up_left.append(piece_types[column - i_up_left][row + i_up_left])
+	
+	# checking up_right
+	while ((path_up_right[len(path_up_right)-1] == null) or (path_up_right[len(path_up_right)-1] == 'MINE')) and (column+i_up_right < 7) and (row+i_up_right < 7):
+		i_up_right += 1
+		path_up_right.append(piece_types[column + i_up_right][row + i_up_right])
+	
+	# checking down_left
+	while ((path_down_left[len(path_down_left)-1] == null) or (path_down_left[len(path_down_left)-1] == 'MINE')) and (column-i_down_left > 0) and (row-i_down_left > 0):
+		i_down_left += 1
+		path_down_left.append(piece_types[column - i_down_left][row - i_down_left])
+	
+	# checking down_right
+	while ((path_down_right[len(path_down_right)-1] == null) or (path_down_right[len(path_down_right)-1] == 'MINE')) and (column+i_down_right < 7) and (row-i_down_right > 0):
+		i_down_right += 1
+		path_down_right.append(piece_types[column + i_down_right][row - i_down_right])
+	
+	# checking knight paths
+	if (column+2 <= 7):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column+2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column+2][row-1])
+	if (column-2 >= 0):
+		if (row+1 <= 7):
+			path_knights.append(piece_types[column-2][row+1])
+		if (row-1 >= 0):
+			path_knights.append(piece_types[column-2][row-1])
+	if (row+2 <= 7):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row+2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row+2])
+	if (row-2 >= 0):
+		if (column+1 <= 7):
+			path_knights.append(piece_types[column+1][row-2])
+		if (column-1 >= 0):
+			path_knights.append(piece_types[column-1][row-2])
+	
+	# checking if white in check
+	# checking for rook and queen attacks
+	if ('B_ROOK' in path_up) or ('B_ROOK' in path_down) or ('B_ROOK' in path_left) or ('B_ROOK' in path_right) or ('B_QUEEN' in path_up) or ('B_QUEEN' in path_down) or ('B_QUEEN' in path_left) or ('B_QUEEN' in path_right):
+		return true
+		
+	# checkign for bishop and queen
+	if ('B_BISHOP' in path_up_left) or ('B_BISHOP' in path_up_right) or ('B_BISHOP' in path_down_left) or ('B_BISHOP' in path_down_right) or ('B_QUEEN' in path_up_left) or ('B_QUEEN' in path_up_right) or ('B_QUEEN' in path_down_left) or ('B_QUEEN' in path_down_right):
+		return true
+	
+	 # checking for knight attacks
+	if ('B_KNIGHT' in path_knights):
+		return true
+	
+	# checking for pawn attacks
+	if len(path_up) > 1:
+		if path_up[1] == 'B_PAWN':
+			return true
 
 
 
