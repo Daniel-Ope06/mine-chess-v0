@@ -24,6 +24,7 @@ Mine Chess is a variation of standard chess. It is chess with mines. Each player
 - Pawn promotion
 
 ## Undone features
+- "Click to click" based movement with highlighted tiles
 - Tutorial
 - Undo
 - Restricting prohibited moves during check
