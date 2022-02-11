@@ -26,7 +26,23 @@ const possible_pieces = [
 	preload("res://Chess Pieces/Black Pieces/black_queen.tscn")
 ]
 
+var piece_textures = [
+	# White
+	preload("res://Assets/chess/white_queen.png"),
+	preload("res://Assets/chess/white_rook.png"),
+	preload("res://Assets/chess/white_bishop.png"),
+	preload("res://Assets/chess/white_knight.png"),
+	
+	# Black
+	preload("res://Assets/chess/black_queen.png"),
+	preload("res://Assets/chess/black_rook.png"),
+	preload("res://Assets/chess/black_bishop.png"),
+	preload("res://Assets/chess/black_knight.png")
+]
+
 const gameOverScreen = preload("res://UI/GameOverScreen.tscn")
+
+
 
 # creating empty arrays and turn counter
 var all_pieces = []
@@ -54,6 +70,7 @@ var chess_notations = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4, 'F':5, 'G':6, 'H':7}
 var piece_value = {'PAWN':1, 'KNIGHT':3, 'BISHOP':3, 'ROOK':5, 'QUEEN':9, 'KING':0}
 
 
+
 func _ready():
 	all_pieces = make_2d_array()
 	piece_types = make_2d_array()
@@ -65,6 +82,7 @@ func _ready():
 	$WhiteInCheckmate.visible = false
 	$BlackInCheck.visible = false
 	$BlackInCheckmate.visible = false
+	$Popup.visible = false
 
 func _process(_delta):
 	touch_input()
@@ -338,21 +356,20 @@ func display_check_and_checkmate():
 #________________Chess Movements________________
 # Pawn movement
 func move_w_pawn(column, row, direction, selected_piece, target_pos, selected_type, target_type):
-	var w_king_pos = find_index('W_KING')
-	var b_king_pos = find_index('B_KING')
-	
 	if selected_type == "W_PAWN":
 		# move to empty space
 		if target_pos == null and direction.x == 0:
 			if (row == 1 and (direction.y == 1 or direction.y == 2)) or (row != 1 and direction.y == 1):
 				move_piece(column, row, selected_piece, selected_type, direction)
-				#undo_invalid_move_in_check(column, row, selected_piece, selected_type, target_pos, direction)
+				popup_w_pawn(row)
+					
+				
 		
 		# kill enemy piece
 		if (target_type != null) and ("B_" in target_type) and (direction.x == 1 or direction.x == -1):
 			if (row == 1 and (direction.y == 1 or direction.y == 2)) or (row != 1 and direction.y == 1):
 				kill_enemy(column, row, direction, selected_piece, selected_type, target_pos)
-				
+				popup_w_pawn(row)
 				# Update gold
 				gold_count(target_type)
 				
@@ -367,12 +384,13 @@ func move_b_pawn(column, row, direction, selected_piece, target_pos, selected_ty
 		if target_pos == null and direction.x == 0:
 			if (row == 6 and (direction.y == -1 or direction.y == -2)) or (row != 6 and direction.y == -1):
 				move_piece(column, row, selected_piece, selected_type, direction)
+				popup_b_pawn(row)
 		
 		# kill enemy piece
 		if (target_type != null) and ("W_" in target_type) and (direction.x == 1 or direction.x == -1):
 			if (row == 6 and (direction.y == -1 or direction.y == -2)) or (row != 6 and direction.y == -1):
 				kill_enemy(column, row, direction, selected_piece, selected_type, target_pos)
-				
+				popup_b_pawn(row)
 				# Update gold
 				gold_count(target_type)
 				
@@ -1642,6 +1660,144 @@ func black_can_block(column, row):
 			return true
 
 
+#________________Promoting pawns________________
+func promote_to(column, row, pos_pieces, p_texture, promotion):
+	all_pieces[column][row].switch_texture(null)
+	var piece = possible_pieces[pos_pieces].instance()
+	add_child(piece)
+	piece.position = grid_to_pixel(column, row)
+	all_pieces[column][row] = piece
+	piece_types[column][row] = promotion
+	all_pieces[column][row].switch_texture(piece_textures[ p_texture])
+
+
+func popup_w_pawn(row):
+	# popup promotion
+	if row == 6:
+		$Popup.visible = true
+		
+		$Popup/PopupDialog/W_QueenButton.visible = true
+		$Popup/PopupDialog/W_RookButton.visible = true
+		$Popup/PopupDialog/W_KnightButton.visible = true
+		$Popup/PopupDialog/W_BishopButton.visible = true
+		
+		$Popup/PopupDialog/B_QueenButton.visible = false
+		$Popup/PopupDialog/B_RookButton.visible = false
+		$Popup/PopupDialog/B_KnightButton.visible = false
+		$Popup/PopupDialog/B_BishopButton.visible = false
+
+func _on_W_QueenButton_pressed() -> void:
+	var promotion = 'W_QUEEN'
+	var last_row = []
+	
+	for i in range(8):
+		last_row.append(piece_types[i][7])
+	
+	var column = last_row.find('W_PAWN')
+	var row = 7
+	promote_to(column, row, 5, 0, promotion)
+	$Popup.visible = false
+
+func _on_W_RookButton_pressed() -> void:
+	var promotion = 'W_ROOK'
+	var last_row = []
+	
+	for i in range(8):
+		last_row.append(piece_types[i][7])
+	
+	var column = last_row.find('W_PAWN')
+	var row = 7
+	promote_to(column, row, 2, 1, promotion)
+	$Popup.visible = false
+
+func _on_W_BishopButton_pressed() -> void:
+	var promotion = 'W_BISHOP'
+	var last_row = []
+	
+	for i in range(8):
+		last_row.append(piece_types[i][7])
+	
+	var column = last_row.find('W_PAWN')
+	var row = 7
+	promote_to(column, row, 1, 2, promotion)
+	$Popup.visible = false
+
+func _on_W_KnightButton_pressed() -> void:
+	var promotion = 'W_KNIGHT'
+	var last_row = []
+	
+	for i in range(8):
+		last_row.append(piece_types[i][7])
+	
+	var column = last_row.find('W_PAWN')
+	var row = 7
+	promote_to(column, row, 4, 3, promotion)
+	$Popup.visible = false
+
+
+func popup_b_pawn(row):
+	# popup promotion
+	if row == 1:
+		$Popup.visible = true
+		
+		$Popup/PopupDialog/W_QueenButton.visible = false
+		$Popup/PopupDialog/W_RookButton.visible = false
+		$Popup/PopupDialog/W_KnightButton.visible = false
+		$Popup/PopupDialog/W_BishopButton.visible = false
+		
+		$Popup/PopupDialog/B_QueenButton.visible = true
+		$Popup/PopupDialog/B_RookButton.visible = true
+		$Popup/PopupDialog/B_KnightButton.visible = true
+		$Popup/PopupDialog/B_BishopButton.visible = true
+
+func _on_B_QueenButton_pressed() -> void:
+	var promotion = 'B_QUEEN'
+	var last_row = []
+	
+	for i in range(8):
+		last_row.append(piece_types[i][0])
+	
+	var column = last_row.find('B_PAWN')
+	var row = 0
+	promote_to(column, row, 11, 4, promotion)
+	$Popup.visible = false
+
+func _on_B_RookButton_pressed() -> void:
+	var promotion = 'B_ROOK'
+	var last_row = []
+	
+	for i in range(8):
+		last_row.append(piece_types[i][0])
+	
+	var column = last_row.find('B_PAWN')
+	var row = 0
+	promote_to(column, row, 8, 5, promotion)
+	$Popup.visible = false
+
+func _on_B_BishopButton_pressed() -> void:
+	var promotion = 'B_BISHOP'
+	var last_row = []
+	
+	for i in range(8):
+		last_row.append(piece_types[i][0])
+	
+	var column = last_row.find('B_PAWN')
+	var row = 0
+	promote_to(column, row, 7, 6, promotion)
+	$Popup.visible = false
+
+func _on_B_KnightButton_pressed() -> void:
+	var promotion = 'B_KNIGHT'
+	var last_row = []
+	
+	for i in range(8):
+		last_row.append(piece_types[i][0])
+	
+	var column = last_row.find('B_PAWN')
+	var row = 0
+	promote_to(column, row, 10, 7, promotion)
+	$Popup.visible = false
+
 
 #________________Getting gold, moving, exploding, and killing enemies________________
 func gold_count(target_type):
@@ -1757,4 +1913,3 @@ func display_instruction():
 	if button_pressed == 'Set':
 		$MinesInstruction.visible = false
 		$TileInstruction.visible = true
-

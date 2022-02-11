@@ -1,10 +1,18 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://Scripts/chess_board.gd" type="Script" id=1]
 [ext_resource path="res://Assets/chess/text.png" type="Texture" id=2]
 [ext_resource path="res://Assets/chess/board.png" type="Texture" id=3]
 [ext_resource path="res://Assets/chess/numbers.png" type="Texture" id=4]
 [ext_resource path="res://Assets/press-start/prstart.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://Assets/chess/white_knight.png" type="Texture" id=6]
+[ext_resource path="res://Assets/chess/white_rook.png" type="Texture" id=7]
+[ext_resource path="res://Assets/chess/white_bishop.png" type="Texture" id=8]
+[ext_resource path="res://Assets/chess/white_queen.png" type="Texture" id=9]
+[ext_resource path="res://Assets/chess/black_queen.png" type="Texture" id=10]
+[ext_resource path="res://Assets/chess/black_knight.png" type="Texture" id=11]
+[ext_resource path="res://Assets/chess/black_bishop.png" type="Texture" id=12]
+[ext_resource path="res://Assets/chess/black_rook.png" type="Texture" id=13]
 
 [sub_resource type="DynamicFont" id=1]
 font_data = ExtResource( 5 )
@@ -313,6 +321,111 @@ custom_styles/normal = SubResource( 5 )
 
 [node name="DissolveTimer" type="Timer" parent="Board"]
 
+[node name="Popup" type="Node2D" parent="Board"]
+z_index = 100
+
+[node name="PopupDialog" type="ColorRect" parent="Board/Popup"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -74.0
+margin_top = -22.0
+margin_right = 78.0
+margin_bottom = 22.0
+color = Color( 0.2, 0.219608, 0.235294, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="W_QueenButton" type="TextureButton" parent="Board/Popup/PopupDialog"]
+margin_left = 19.0
+margin_top = 11.0
+margin_right = 37.0
+margin_bottom = 29.0
+texture_normal = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="B_QueenButton" type="TextureButton" parent="Board/Popup/PopupDialog"]
+margin_left = 19.0
+margin_top = 11.0
+margin_right = 37.0
+margin_bottom = 29.0
+texture_normal = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="W_RookButton" type="TextureButton" parent="Board/Popup/PopupDialog"]
+margin_left = 52.0
+margin_top = 11.0
+margin_right = 66.0
+margin_bottom = 29.0
+texture_normal = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="B_RookButton" type="TextureButton" parent="Board/Popup/PopupDialog"]
+margin_left = 52.0
+margin_top = 11.0
+margin_right = 66.0
+margin_bottom = 29.0
+texture_normal = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="W_BishopButton" type="TextureButton" parent="Board/Popup/PopupDialog"]
+margin_left = 85.0
+margin_top = 11.0
+margin_right = 103.0
+margin_bottom = 30.0
+texture_normal = ExtResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="B_BishopButton" type="TextureButton" parent="Board/Popup/PopupDialog"]
+margin_left = 85.0
+margin_top = 11.0
+margin_right = 103.0
+margin_bottom = 30.0
+texture_normal = ExtResource( 12 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="W_KnightButton" type="TextureButton" parent="Board/Popup/PopupDialog"]
+margin_left = 118.0
+margin_top = 11.0
+margin_right = 134.0
+margin_bottom = 29.0
+texture_normal = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="B_KnightButton" type="TextureButton" parent="Board/Popup/PopupDialog"]
+margin_left = 118.0
+margin_top = 11.0
+margin_right = 134.0
+margin_bottom = 29.0
+texture_normal = ExtResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="pressed" from="Board/BuyMine" to="Board" method="_on_BuyMine_pressed"]
 [connection signal="pressed" from="Board/SetMine" to="Board" method="_on_SetMine_pressed"]
 [connection signal="text_entered" from="Board/InputArea/Input" to="Board" method="_on_Input_text_entered"]
+[connection signal="pressed" from="Board/Popup/PopupDialog/W_QueenButton" to="Board" method="_on_W_QueenButton_pressed"]
+[connection signal="pressed" from="Board/Popup/PopupDialog/B_QueenButton" to="Board" method="_on_B_QueenButton_pressed"]
+[connection signal="pressed" from="Board/Popup/PopupDialog/W_RookButton" to="Board" method="_on_W_RookButton_pressed"]
+[connection signal="pressed" from="Board/Popup/PopupDialog/B_RookButton" to="Board" method="_on_B_RookButton_pressed"]
+[connection signal="pressed" from="Board/Popup/PopupDialog/W_BishopButton" to="Board" method="_on_W_BishopButton_pressed"]
+[connection signal="pressed" from="Board/Popup/PopupDialog/B_BishopButton" to="Board" method="_on_B_BishopButton_pressed"]
+[connection signal="pressed" from="Board/Popup/PopupDialog/W_KnightButton" to="Board" method="_on_W_KnightButton_pressed"]
+[connection signal="pressed" from="Board/Popup/PopupDialog/B_KnightButton" to="Board" method="_on_B_KnightButton_pressed"]

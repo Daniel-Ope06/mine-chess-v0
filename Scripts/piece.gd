@@ -17,4 +17,6 @@ func move(target):
 func dissolve():
 	sprite.material.set_shader_param("dissolve_state", 0.3)
 
+func switch_texture(mat):
+	sprite.set_texture(mat)
 
