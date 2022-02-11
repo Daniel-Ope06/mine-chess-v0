@@ -21,9 +21,9 @@ Mine Chess is a variation of standard chess. It is chess with mines. Each player
 - Gold system
 - Check and Checkmate system
 - Menu
+- Pawn promotion
 
 ## Undone features
 - Tutorial
 - Undo
-- Pawn promotion
 - Restricting prohibited moves during check
